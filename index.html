@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Vote Validator</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            background: #050816;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .background {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background:
+                radial-gradient(circle at 10% 20%,
+                rgba(37,99,235,.3),
+                transparent 30%),
+                radial-gradient(circle at 90% 80%,
+                rgba(124,58,237,.3),
+                transparent 30%),
+                #050816;
+        }
+
+        .grid {
+            position: absolute;
+            inset: 0;
+            opacity: .15;
+            background-image:
+                linear-gradient(rgba(255,255,255,.06) 1px,
+                transparent 1px),
+                linear-gradient(90deg,
+                rgba(255,255,255,.06) 1px,
+                transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        /* NAVBAR */
+
+        .navbar {
+            height: 75px;
+            padding: 0 6%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255,255,255,.08);
+            background: rgba(5,8,22,.7);
+            backdrop-filter: blur(15px);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brandIcon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg,#2563eb,#7c3aed);
+            font-size: 21px;
+        }
+
+        .brand h2 {
+            font-size: 17px;
+        }
+
+        .brand h2 span {
+            color: #60a5fa;
+        }
+
+        .brand small {
+            display: block;
+            color: #64748b;
+            font-size: 7px;
+            letter-spacing: 1.5px;
+            margin-top: 3px;
+        }
+
+        .status {
+            color: #64748b;
+            font-size: 9px;
+        }
+
+        .statusDot {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 10px #22c55e;
+            margin-right: 5px;
+        }
+
+        /* MAIN */
+
+        .main {
+            width: 88%;
+            max-width: 1200px;
+            min-height: calc(100vh - 75px);
+            margin: auto;
+            display: grid;
+            grid-template-columns: 1fr 430px;
+            gap: 70px;
+            align-items: center;
+        }
+
+        /* LEFT */
+
+        .miniTitle {
+            color: #60a5fa;
+            font-size: 9px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+
+        .left h1 {
+            font-size: clamp(55px,7vw,90px);
+            line-height: .9;
+            letter-spacing: -5px;
+        }
+
+        .blue {
+            background: linear-gradient(90deg,#60a5fa,#a78bfa);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .description {
+            max-width: 500px;
+            color: #8190a8;
+            font-size: 13px;
+            line-height: 1.8;
+            margin-top: 25px;
+        }
+
+        .steps {
+            display: flex;
+            align-items: center;
+            max-width: 500px;
+            margin-top: 35px;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stepNumber {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid rgba(96,165,250,.3);
+            background: rgba(59,130,246,.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #60a5fa;
+            font-size: 9px;
+            font-weight: bold;
+        }
+
+        .stepText {
+            color: #7b879b;
+            font-size: 8px;
+        }
+
+        .line {
+            height: 1px;
+            flex: 1;
+            background: rgba(255,255,255,.1);
+            margin: 0 10px;
+        }
+
+        /* CARD */
+
+        .card {
+            padding: 32px;
+            border-radius: 24px;
+            background: linear-gradient(
+                145deg,
+                rgba(20,29,55,.96),
+                rgba(8,13,29,.96)
+            );
+            border: 1px solid rgba(255,255,255,.1);
+            box-shadow: 0 30px 80px rgba(0,0,0,.45);
+        }
+
+        .cardTop {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+        }
+
+        .cardLabel {
+            color: #64748b;
+            font-size: 8px;
+            letter-spacing: 1.5px;
+        }
+
+        .secure {
+            color: #4ade80;
+            font-size: 8px;
+        }
+
+        .card h2 {
+            font-size: 25px;
+            margin-bottom: 7px;
+        }
+
+        .intro {
+            color: #69758b;
+            font-size: 10px;
+            line-height: 1.6;
+            margin-bottom: 22px;
+        }
+
+        .field {
+            margin-bottom: 14px;
+        }
+
+        .field label {
+            display: block;
+            color: #8995aa;
+            font-size: 8px;
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            height: 47px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,.08);
+            background: rgba(255,255,255,.05);
+            color: white;
+            outline: none;
+            padding: 0 14px;
+            font-size: 11px;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        select option {
+            background: #111827;
+            color: white;
+        }
+
+        input::placeholder {
+            color: #536077;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,.1);
+        }
+
+        /* BUTTON */
+
+        .checkButton {
+            width: 100%;
+            height: 50px;
+            margin-top: 8px;
+            border: none;
+            border-radius: 11px;
+            background: linear-gradient(
+                100deg,
+                #2563eb,
+                #4f46e5,
+                #7c3aed
+            );
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: .25s;
+        }
+
+        .checkButton:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(59,130,246,.3);
+        }
+
+        #result {
+            min-height: 25px;
+            text-align: center;
+            margin-top: 14px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .footer {
+            border-top: 1px solid rgba(255,255,255,.06);
+            margin-top: 15px;
+            padding-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            color: #475569;
+            font-size: 7px;
+        }
+
+        @media(max-width:900px) {
+
+            body {
+                overflow-y: auto;
+            }
+
+            .main {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                padding: 50px 0;
+            }
+
+            .left {
+                text-align: center;
+            }
+
+            .description {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .steps {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+        }
+
+        @media(max-width:500px) {
+
+            .main {
+                width: 90%;
+            }
+
+            .left h1 {
+                font-size: 55px;
+                letter-spacing: -3px;
+            }
+
+            .card {
+                padding: 25px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="background">
+    <div class="grid"></div>
+</div>
+
+
+<!-- NAVBAR -->
+
+<header class="navbar">
+
+    <div class="brand">
+
+        <div class="brandIcon">
+            🗳️
+        </div>
+
+        <div>
+
+            <h2>
+                Vote<span>Validator</span>
+            </h2>
+
+            <small>
+                DIGITAL ELIGIBILITY SYSTEM
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <div class="status">
+
+        <span class="statusDot"></span>
+
+        SYSTEM ONLINE
+
+    </div>
+
+</header>
+
+
+
+<!-- MAIN -->
+
+<main class="main">
+
+
+    <!-- LEFT -->
+
+    <section class="left">
+
+        <div class="miniTitle">
+            VOTER VERIFICATION
+        </div>
+
+
+        <h1>
+
+            YOUR
+
+            <br>
+
+            <span class="blue">
+                VOTE.
+            </span>
+
+            <br>
+
+            YOUR
+
+            <br>
+
+            <span class="blue">
+                VOICE.
+            </span>
+
+        </h1>
+
+
+        <p class="description">
+
+            Verify your voting eligibility through
+            a simple digital identity check.
+            Enter your information to continue
+            to your voter dashboard.
+
+        </p>
+
+
+        <div class="steps">
+
+            <div class="step">
+
+                <div class="stepNumber">
+                    01
+                </div>
+
+                <div class="stepText">
+                    IDENTITY
+                </div>
+
+            </div>
+
+
+            <div class="line"></div>
+
+
+            <div class="step">
+
+                <div class="stepNumber">
+                    02
+                </div>
+
+                <div class="stepText">
+                    VERIFY
+                </div>
+
+            </div>
+
+
+            <div class="line"></div>
+
+
+            <div class="step">
+
+                <div class="stepNumber">
+                    03
+                </div>
+
+                <div class="stepText">
+                    DASHBOARD
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- FORM -->
+
+    <section>
+
+        <div class="card">
+
+            <div class="cardTop">
+
+                <span class="cardLabel">
+                    STEP 01 / IDENTITY
+                </span>
+
+                <span class="secure">
+                    ● SECURE
+                </span>
+
+            </div>
+
+
+            <h2>
+                Verify your identity
+            </h2>
+
+
+            <p class="intro">
+                Enter your details below to check
+                voting eligibility.
+            </p>
+
+
+
+            <!-- NAME -->
+
+            <div class="field">
+
+                <label>
+                    FULL NAME
+                </label>
+
+                <input
+                    type="text"
+                    id="name"
+                    autocomplete="name"
+                    placeholder="Enter your full name"
+                >
+
+            </div>
+
+
+
+            <!-- DOB -->
+
+            <div class="field">
+
+                <label>
+                    DATE OF BIRTH
+                </label>
+
+                <input
+                    type="date"
+                    id="dob"
+                    autocomplete="bday"
+                >
+
+            </div>
+
+
+
+            <!-- PHONE -->
+
+            <div class="field">
+
+                <label>
+                    MOBILE NUMBER
+                </label>
+
+                <input
+                    type="tel"
+                    id="phone"
+                    maxlength="10"
+                    autocomplete="tel"
+                    placeholder="Enter 10-digit phone number"
+                >
+
+            </div>
+
+
+
+            <!-- COUNTRY -->
+
+            <div class="field">
+
+                <label>
+                    COUNTRY
+                </label>
+
+                <select
+                    id="country"
+                    autocomplete="country"
+                >
+
+                    <option value="">
+                        Select your country
+                    </option>
+
+                    <option value="india">
+                        India
+                    </option>
+
+                    <option value="usa">
+                        United States
+                    </option>
+
+                    <option value="uk">
+                        United Kingdom
+                    </option>
+
+                    <option value="canada">
+                        Canada
+                    </option>
+
+                </select>
+
+            </div>
+
+
+
+            <!-- BUTTON -->
+
+            <button
+                type="button"
+                class="checkButton"
+                onclick="checkVote()">
+
+                VERIFY ELIGIBILITY →
+
+            </button>
+
+
+            <p id="result"></p>
+
+
+            <div class="footer">
+
+                <span>
+                    VOTE VALIDATOR
+                </span>
+
+                <span>
+                    EDUCATIONAL DEMO • 2026
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+
+<!-- IMPORTANT: JAVASCRIPT IS INSIDE THIS FILE -->
+
+<script>
+
+function checkVote() {
+
+    let name =
+        document.getElementById("name").value.trim();
+
+    let dob =
+        document.getElementById("dob").value;
+
+    let phone =
+        document.getElementById("phone").value.trim();
+
+    let country =
+        document.getElementById("country").value;
+
+    let result =
+        document.getElementById("result");
+
+
+    /* EMPTY FIELDS */
+
+    if (
+        name === "" ||
+        dob === "" ||
+        phone === "" ||
+        country === ""
+    ) {
+
+        result.innerHTML =
+            "⚠️ Please enter all details.";
+
+        result.style.color = "#fbbf24";
+
+        return;
+    }
+
+
+    /* PHONE */
+
+    if (!/^[0-9]{10}$/.test(phone)) {
+
+        result.innerHTML =
+            "⚠️ Enter a valid 10-digit phone number.";
+
+        result.style.color = "#fbbf24";
+
+        return;
+    }
+
+
+    /* COUNTRY */
+
+    if (country !== "india") {
+
+        result.innerHTML =
+            "❌ Please select India.";
+
+        result.style.color = "#f87171";
+
+        return;
+    }
+
+
+    /* AGE */
+
+    let birthDate = new Date(dob);
+
+    let today = new Date();
+
+    let age =
+        today.getFullYear() -
+        birthDate.getFullYear();
+
+    let month =
+        today.getMonth() -
+        birthDate.getMonth();
+
+
+    if (
+        month < 0 ||
+        (
+            month === 0 &&
+            today.getDate() < birthDate.getDate()
+        )
+    ) {
+
+        age--;
+
+    }
+
+
+    /* UNDER 18 */
+
+    if (age < 18) {
+
+        result.innerHTML =
+            "❌ " + name +
+            ", you are not eligible to vote.";
+
+        result.style.color = "#f87171";
+
+        return;
+    }
+
+
+    /* ELIGIBLE */
+
+    result.innerHTML =
+        "✓ Eligibility verified. Opening dashboard...";
+
+    result.style.color = "#4ade80";
+
+
+    /* SAVE DATA */
+
+    localStorage.setItem(
+        "voterName",
+        name
+    );
+
+    localStorage.setItem(
+        "voterAge",
+        age
+    );
+
+    localStorage.setItem(
+        "voterPhone",
+        phone
+    );
+
+
+    /* DASHBOARD REDIRECT */
+
+    setTimeout(function() {
+
+        window.location.href =
+            "dashboard.html";
+
+    }, 1000);
+
+}
+
+</script>
+
+
+</body>
+
+</html>

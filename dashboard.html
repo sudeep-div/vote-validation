@@ -1,0 +1,2169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Vote Validator Dashboard</title>
+
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+
+            background:
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(59,130,246,0.18),
+                    transparent 25%
+                ),
+                radial-gradient(
+                    circle at 90% 90%,
+                    rgba(124,58,237,0.15),
+                    transparent 25%
+                ),
+                #070b18;
+
+            color: white;
+
+            min-height: 100vh;
+        }
+
+
+        /* ==============================
+           SIDEBAR
+        ============================== */
+
+        .sidebar {
+
+            position: fixed;
+
+            left: 0;
+            top: 0;
+            bottom: 0;
+
+            width: 250px;
+
+            background: rgba(13,18,35,0.94);
+
+            border-right: 1px solid rgba(255,255,255,0.08);
+
+            padding: 25px 18px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            backdrop-filter: blur(20px);
+
+            z-index: 10;
+        }
+
+
+        .logo {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            padding: 5px 10px 35px;
+        }
+
+
+        .logoIcon {
+
+            width: 45px;
+            height: 45px;
+
+            border-radius: 13px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #7c3aed
+                );
+
+            font-size: 22px;
+
+            box-shadow:
+                0 10px 30px rgba(37,99,235,0.4);
+        }
+
+
+        .logo h2 {
+
+            font-size: 17px;
+
+            letter-spacing: -0.5px;
+        }
+
+
+        .logo span {
+
+            color: #60a5fa;
+        }
+
+
+        .logo small {
+
+            display: block;
+
+            color: #64748b;
+
+            font-size: 8px;
+
+            letter-spacing: 1.5px;
+
+            margin-top: 3px;
+        }
+
+
+        .menuTitle {
+
+            color: #475569;
+
+            font-size: 9px;
+
+            letter-spacing: 1.5px;
+
+            padding: 0 12px;
+
+            margin-bottom: 10px;
+        }
+
+
+        .menu {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 5px;
+        }
+
+
+        .menu button {
+
+            border: none;
+
+            background: transparent;
+
+            color: #8b96aa;
+
+            text-align: left;
+
+            padding: 13px;
+
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            font-size: 12px;
+
+            transition: 0.25s;
+        }
+
+
+        .menu button:hover {
+
+            background: rgba(59,130,246,0.12);
+
+            color: white;
+        }
+
+
+        .menu button.active {
+
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(37,99,235,0.3),
+                    rgba(37,99,235,0.05)
+                );
+
+            color: white;
+
+            border-left: 3px solid #3b82f6;
+        }
+
+
+        .menuIcon {
+
+            display: inline-block;
+
+            width: 25px;
+
+            font-size: 16px;
+        }
+
+
+        .sideBottom {
+
+            margin-top: auto;
+        }
+
+
+        .security {
+
+            background: rgba(255,255,255,0.035);
+
+            border: 1px solid rgba(255,255,255,0.06);
+
+            border-radius: 12px;
+
+            padding: 14px;
+
+            display: flex;
+
+            gap: 10px;
+
+            align-items: center;
+
+            margin-bottom: 12px;
+        }
+
+
+        .securityIcon {
+
+            width: 32px;
+            height: 32px;
+
+            border-radius: 9px;
+
+            background: rgba(34,197,94,0.12);
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+        }
+
+
+        .security strong {
+
+            display: block;
+
+            font-size: 10px;
+        }
+
+
+        .security small {
+
+            color: #64748b;
+
+            font-size: 8px;
+        }
+
+
+        .logout {
+
+            width: 100%;
+
+            padding: 11px;
+
+            border-radius: 9px;
+
+            border: 1px solid rgba(255,255,255,0.08);
+
+            background: transparent;
+
+            color: #94a3b8;
+
+            cursor: pointer;
+        }
+
+
+        .logout:hover {
+
+            background: #ef4444;
+
+            color: white;
+
+            border-color: #ef4444;
+        }
+
+
+        /* ==============================
+           MAIN
+        ============================== */
+
+        .main {
+
+            margin-left: 250px;
+
+            padding: 0 38px 35px;
+
+            min-height: 100vh;
+        }
+
+
+        /* TOP BAR */
+
+        .topbar {
+
+            height: 90px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+        }
+
+
+        .topbar small {
+
+            color: #64748b;
+
+            font-size: 9px;
+
+            letter-spacing: 2px;
+        }
+
+
+        .topbar h1 {
+
+            font-size: 25px;
+
+            margin-top: 5px;
+        }
+
+
+        .topRight {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 18px;
+        }
+
+
+        .online {
+
+            color: #94a3b8;
+
+            font-size: 10px;
+        }
+
+
+        .online i {
+
+            display: inline-block;
+
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #22c55e;
+
+            box-shadow: 0 0 10px #22c55e;
+
+            margin-right: 6px;
+        }
+
+
+        .userCircle {
+
+            width: 40px;
+            height: 40px;
+
+            border-radius: 50%;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #9333ea
+                );
+
+            font-weight: bold;
+
+            box-shadow:
+                0 5px 20px rgba(37,99,235,0.35);
+        }
+
+
+        /* ==============================
+           HERO
+        ============================== */
+
+        .hero {
+
+            min-height: 260px;
+
+            border-radius: 24px;
+
+            padding: 35px 40px;
+
+            position: relative;
+
+            overflow: hidden;
+
+            background:
+                radial-gradient(
+                    circle at 85% 20%,
+                    rgba(139,92,246,0.45),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 65% 100%,
+                    rgba(37,99,235,0.35),
+                    transparent 35%
+                ),
+                linear-gradient(
+                    135deg,
+                    #111d42,
+                    #162a63,
+                    #251456
+                );
+
+            border: 1px solid rgba(255,255,255,0.1);
+
+            box-shadow:
+                0 25px 70px rgba(0,0,0,0.3);
+        }
+
+
+        .heroContent {
+
+            position: relative;
+
+            z-index: 2;
+
+            max-width: 600px;
+        }
+
+
+        .verified {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            padding: 7px 12px;
+
+            border-radius: 30px;
+
+            background: rgba(34,197,94,0.12);
+
+            border: 1px solid rgba(34,197,94,0.25);
+
+            color: #86efac;
+
+            font-size: 9px;
+
+            font-weight: bold;
+
+            letter-spacing: 1px;
+        }
+
+
+        .hero h2 {
+
+            font-size: 38px;
+
+            margin-top: 18px;
+
+            letter-spacing: -1.2px;
+        }
+
+
+        .hero h2 span {
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #60a5fa,
+                    #c084fc
+                );
+
+            -webkit-background-clip: text;
+
+            color: transparent;
+        }
+
+
+        .hero p {
+
+            color: #aebbd5;
+
+            font-size: 12px;
+
+            line-height: 1.7;
+
+            margin-top: 10px;
+
+            max-width: 510px;
+        }
+
+
+        .heroButtons {
+
+            display: flex;
+
+            gap: 10px;
+
+            margin-top: 22px;
+        }
+
+
+        .heroButtons button {
+
+            border: none;
+
+            padding: 11px 17px;
+
+            border-radius: 9px;
+
+            cursor: pointer;
+
+            font-weight: bold;
+
+            font-size: 10px;
+
+            background: white;
+
+            color: #172554;
+
+            transition: 0.2s;
+        }
+
+
+        .heroButtons button:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 10px 25px rgba(0,0,0,0.2);
+        }
+
+
+        .heroButtons .secondary {
+
+            background: rgba(255,255,255,0.08);
+
+            color: white;
+
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+
+        /* HERO CIRCLE */
+
+        .heroGraphic {
+
+            position: absolute;
+
+            right: 70px;
+
+            top: 30px;
+
+            width: 220px;
+
+            height: 220px;
+        }
+
+
+        .circle1,
+        .circle2,
+        .circle3 {
+
+            position: absolute;
+
+            border-radius: 50%;
+
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+
+
+        .circle1 {
+
+            width: 210px;
+            height: 210px;
+
+            top: 0;
+            left: 0;
+        }
+
+
+        .circle2 {
+
+            width: 155px;
+            height: 155px;
+
+            top: 28px;
+            left: 28px;
+        }
+
+
+        .circle3 {
+
+            width: 100px;
+            height: 100px;
+
+            top: 55px;
+            left: 55px;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(96,165,250,0.35),
+                    rgba(124,58,237,0.1)
+                );
+
+            box-shadow:
+                0 0 50px rgba(96,165,250,0.25);
+        }
+
+
+        .check {
+
+            position: absolute;
+
+            width: 100px;
+            height: 100px;
+
+            top: 55px;
+            left: 55px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            font-size: 48px;
+
+            color: #86efac;
+        }
+
+
+        /* ==============================
+           STATS
+        ============================== */
+
+        .stats {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 15px;
+
+            margin: 18px 0;
+        }
+
+
+        .stat {
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #111827,
+                    #0d1324
+                );
+
+            border: 1px solid rgba(255,255,255,0.07);
+
+            border-radius: 16px;
+
+            padding: 19px;
+
+            position: relative;
+
+            overflow: hidden;
+
+            transition: 0.25s;
+        }
+
+
+        .stat:hover {
+
+            transform: translateY(-4px);
+
+            border-color:
+                rgba(96,165,250,0.25);
+        }
+
+
+        .statTop {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+        }
+
+
+        .statIcon {
+
+            width: 40px;
+            height: 40px;
+
+            border-radius: 11px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            font-size: 18px;
+        }
+
+
+        .blue {
+            background: rgba(59,130,246,0.14);
+        }
+
+
+        .purple {
+            background: rgba(139,92,246,0.14);
+        }
+
+
+        .green {
+            background: rgba(34,197,94,0.14);
+        }
+
+
+        .orange {
+            background: rgba(249,115,22,0.14);
+        }
+
+
+        .stat small {
+
+            color: #64748b;
+
+            font-size: 8px;
+
+            letter-spacing: 1px;
+        }
+
+
+        .stat h3 {
+
+            font-size: 27px;
+
+            margin-top: 12px;
+        }
+
+
+        .stat p {
+
+            color: #64748b;
+
+            font-size: 9px;
+
+            margin-top: 3px;
+        }
+
+
+        /* ==============================
+           GRID
+        ============================== */
+
+        .grid {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1.25fr;
+
+            gap: 18px;
+
+            margin-top: 18px;
+        }
+
+
+        .card {
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(17,24,39,0.95),
+                    rgba(10,15,28,0.95)
+                );
+
+            border: 1px solid rgba(255,255,255,0.07);
+
+            border-radius: 17px;
+
+            padding: 23px;
+        }
+
+
+        .cardTitle {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-bottom: 20px;
+        }
+
+
+        .cardTitle small {
+
+            color: #64748b;
+
+            font-size: 8px;
+
+            letter-spacing: 1.5px;
+        }
+
+
+        .cardTitle h3 {
+
+            font-size: 16px;
+
+            margin-top: 4px;
+        }
+
+
+        /* PROFILE */
+
+        .profile {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+
+            padding-bottom: 20px;
+
+            border-bottom:
+                1px solid rgba(255,255,255,0.06);
+        }
+
+
+        .profileAvatar {
+
+            width: 58px;
+            height: 58px;
+
+            border-radius: 16px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #9333ea
+                );
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            font-size: 22px;
+
+            font-weight: bold;
+        }
+
+
+        .profile h2 {
+
+            font-size: 18px;
+        }
+
+
+        .profile p {
+
+            color: #64748b;
+
+            font-size: 9px;
+
+            margin-top: 4px;
+        }
+
+
+        .profileDetails {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 10px;
+
+            margin-top: 20px;
+        }
+
+
+        .detail {
+
+            background: rgba(255,255,255,0.035);
+
+            padding: 12px;
+
+            border-radius: 10px;
+        }
+
+
+        .detail span {
+
+            display: block;
+
+            color: #64748b;
+
+            font-size: 7px;
+
+            letter-spacing: 1px;
+
+            margin-bottom: 6px;
+        }
+
+
+        .detail strong {
+
+            font-size: 10px;
+        }
+
+
+        /* CHART */
+
+        .chart {
+
+            height: 175px;
+
+            display: flex;
+
+            align-items: end;
+
+            gap: 15px;
+
+            padding:
+                15px 10px 0;
+
+            border-bottom:
+                1px solid rgba(255,255,255,0.08);
+        }
+
+
+        .chartBar {
+
+            flex: 1;
+
+            border-radius:
+                7px 7px 2px 2px;
+
+            background:
+                linear-gradient(
+                    to top,
+                    #2563eb,
+                    #8b5cf6
+                );
+
+            position: relative;
+
+            min-width: 15px;
+
+            transition: 0.3s;
+        }
+
+
+        .chartBar:hover {
+
+            filter: brightness(1.3);
+
+            transform: scaleY(1.03);
+        }
+
+
+        .chartLabel {
+
+            text-align: center;
+
+            color: #64748b;
+
+            font-size: 7px;
+
+            margin-top: 8px;
+        }
+
+
+        /* ==============================
+           SERVICES
+        ============================== */
+
+        .services {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3,1fr);
+
+            gap: 10px;
+        }
+
+
+        .service {
+
+            background:
+                rgba(255,255,255,0.035);
+
+            border: 1px solid rgba(255,255,255,0.06);
+
+            border-radius: 12px;
+
+            padding: 15px;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+
+        .service:hover {
+
+            background:
+                rgba(59,130,246,0.08);
+
+            transform: translateY(-3px);
+        }
+
+
+        .serviceIcon {
+
+            width: 36px;
+            height: 36px;
+
+            border-radius: 10px;
+
+            background: rgba(59,130,246,0.13);
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            margin-bottom: 12px;
+        }
+
+
+        .service strong {
+
+            display: block;
+
+            font-size: 10px;
+        }
+
+
+        .service p {
+
+            color: #64748b;
+
+            font-size: 8px;
+
+            line-height: 1.5;
+
+            margin-top: 5px;
+        }
+
+
+        /* ==============================
+           DEMO ACTION
+        ============================== */
+
+        .demo {
+
+            margin-top: 18px;
+
+            border-radius: 17px;
+
+            padding: 25px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #172554,
+                    #312e81
+                );
+
+            border: 1px solid
+                rgba(129,140,248,0.2);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+        }
+
+
+        .demo small {
+
+            color: #93c5fd;
+
+            font-size: 8px;
+
+            letter-spacing: 1.5px;
+        }
+
+
+        .demo h2 {
+
+            font-size: 19px;
+
+            margin: 6px 0;
+        }
+
+
+        .demo p {
+
+            color: #9fb2d7;
+
+            font-size: 9px;
+        }
+
+
+        .demo button {
+
+            border: none;
+
+            padding: 12px 18px;
+
+            border-radius: 9px;
+
+            background: white;
+
+            color: #1e3a8a;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+
+        #demoMessage {
+
+            color: #86efac;
+
+            font-size: 9px;
+
+            margin-top: 7px;
+        }
+
+
+        /* ==============================
+           FOOTER
+        ============================== */
+
+        footer {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            padding: 25px 3px 10px;
+
+            color: #475569;
+
+            font-size: 8px;
+        }
+
+
+        /* ==============================
+           RESPONSIVE
+        ============================== */
+
+        @media(max-width:1000px) {
+
+            .stats {
+
+                grid-template-columns:
+                    repeat(2,1fr);
+            }
+
+            .grid {
+
+                grid-template-columns: 1fr;
+            }
+
+            .heroGraphic {
+
+                opacity: 0.4;
+
+                right: 20px;
+            }
+
+        }
+
+
+        @media(max-width:700px) {
+
+            .sidebar {
+
+                width: 70px;
+
+                padding: 20px 8px;
+            }
+
+            .logo h2,
+            .logo small,
+            .menuTitle,
+            .menu button span:last-child,
+            .security div,
+            .logout span {
+
+                display: none;
+            }
+
+            .logo {
+
+                justify-content: center;
+
+                padding-bottom: 30px;
+            }
+
+            .menu button {
+
+                text-align: center;
+
+                padding: 13px 5px;
+            }
+
+            .main {
+
+                margin-left: 70px;
+
+                padding: 0 15px;
+            }
+
+            .hero {
+
+                padding: 25px;
+            }
+
+            .hero h2 {
+
+                font-size: 27px;
+            }
+
+            .heroGraphic {
+
+                display: none;
+            }
+
+            .services {
+
+                grid-template-columns: 1fr;
+            }
+
+            .demo {
+
+                flex-direction: column;
+
+                align-items: flex-start;
+
+                gap: 18px;
+            }
+
+            footer {
+
+                flex-direction: column;
+
+                gap: 8px;
+            }
+        }
+
+
+        @media(max-width:500px) {
+
+            .stats {
+
+                grid-template-columns: 1fr;
+            }
+
+            .profileDetails {
+
+                grid-template-columns: 1fr;
+            }
+
+            .heroButtons {
+
+                flex-direction: column;
+            }
+
+            .heroButtons button {
+
+                width: 100%;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logoIcon">
+                🗳️
+            </div>
+
+            <div>
+
+                <h2>
+                    Vote<span>Validator</span>
+                </h2>
+
+                <small>
+                    VOTER PORTAL
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <p class="menuTitle">
+            MAIN MENU
+        </p>
+
+
+        <div class="menu">
+
+            <button class="active">
+                <span class="menuIcon">⌂</span>
+                Dashboard
+            </button>
+
+
+            <button onclick="openElectoralSearch()">
+                <span class="menuIcon">🔍</span>
+                Electoral Roll
+            </button>
+
+
+            <button onclick="openVoterServices()">
+                <span class="menuIcon">📋</span>
+                Voter Services
+            </button>
+
+
+            <button onclick="openECI()">
+                <span class="menuIcon">🏛️</span>
+                Election Commission
+            </button>
+
+        </div>
+
+
+        <div class="sideBottom">
+
+            <div class="security">
+
+                <div class="securityIcon">
+                    🔒
+                </div>
+
+                <div>
+
+                    <strong>
+                        Secure Portal
+                    </strong>
+
+                    <small>
+                        Educational Demo
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <button class="logout"
+                    onclick="logout()">
+
+                ↪ &nbsp; Logout
+
+            </button>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+
+        <!-- TOP -->
+
+        <header class="topbar">
+
+            <div>
+
+                <small>
+                    OVERVIEW
+                </small>
+
+                <h1>
+                    Dashboard
+                </h1>
+
+            </div>
+
+
+            <div class="topRight">
+
+                <div class="online">
+
+                    <i></i>
+
+                    System Online
+
+                </div>
+
+
+                <div class="userCircle"
+                     id="avatarLetter">
+
+                    V
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- HERO -->
+
+        <section class="hero">
+
+
+            <div class="heroContent">
+
+                <div class="verified">
+
+                    ✓
+
+                    ELIGIBILITY VERIFIED
+
+                </div>
+
+
+                <h2>
+
+                    Welcome back,
+
+                    <span id="userName">
+                        Voter
+                    </span>
+
+                </h2>
+
+
+                <p>
+
+                    Your voter eligibility verification has
+                    been completed successfully. Your profile
+                    is ready to access voter services.
+
+                </p>
+
+
+                <div class="heroButtons">
+
+                    <button onclick="openVoterServices()">
+
+                        Voter Services →
+
+                    </button>
+
+
+                    <button class="secondary"
+                            onclick="openElectoralSearch()">
+
+                        Search Electoral Roll
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="heroGraphic">
+
+                <div class="circle1"></div>
+
+                <div class="circle2"></div>
+
+                <div class="circle3"></div>
+
+                <div class="check">
+                    ✓
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- STATS -->
+
+        <section class="stats">
+
+
+            <div class="stat">
+
+                <div class="statTop">
+
+                    <div class="statIcon blue">
+                        👥
+                    </div>
+
+                </div>
+
+                <h3 id="totalVoters">
+                    1000
+                </h3>
+
+                <p>
+                    Demo Registered Electors
+                </p>
+
+            </div>
+
+
+
+            <div class="stat">
+
+                <div class="statTop">
+
+                    <div class="statIcon purple">
+                        🗳️
+                    </div>
+
+                </div>
+
+                <h3 id="votesCast">
+                    450
+                </h3>
+
+                <p>
+                    Demo Votes Recorded
+                </p>
+
+            </div>
+
+
+
+            <div class="stat">
+
+                <div class="statTop">
+
+                    <div class="statIcon green">
+                        📊
+                    </div>
+
+                </div>
+
+                <h3 id="turnout">
+                    45%
+                </h3>
+
+                <p>
+                    Demo Turnout
+                </p>
+
+            </div>
+
+
+
+            <div class="stat">
+
+                <div class="statTop">
+
+                    <div class="statIcon orange">
+                        ⏳
+                    </div>
+
+                </div>
+
+                <h3 id="remaining">
+                    550
+                </h3>
+
+                <p>
+                    Demo Remaining
+                </p>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- PROFILE + CHART -->
+
+        <section class="grid">
+
+
+            <!-- PROFILE -->
+
+            <div class="card">
+
+                <div class="cardTitle">
+
+                    <div>
+
+                        <small>
+                            IDENTITY
+                        </small>
+
+                        <h3>
+                            Voter Profile
+                        </h3>
+
+                    </div>
+
+                </div>
+
+
+                <div class="profile">
+
+                    <div class="profileAvatar"
+                         id="profileLetter">
+
+                        V
+
+                    </div>
+
+
+                    <div>
+
+                        <h2 id="profileName">
+                            Voter
+                        </h2>
+
+                        <p>
+                            ✓ Eligibility verified
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="profileDetails">
+
+
+                    <div class="detail">
+
+                        <span>
+                            AGE
+                        </span>
+
+                        <strong id="displayAge">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <span>
+                            PHONE
+                        </span>
+
+                        <strong id="displayPhone">
+                            -
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail">
+
+                        <span>
+                            COUNTRY
+                        </span>
+
+                        <strong>
+                            🇮🇳 India
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- CHART -->
+
+            <div class="card">
+
+                <div class="cardTitle">
+
+                    <div>
+
+                        <small>
+                            ANALYTICS
+                        </small>
+
+                        <h3>
+                            Demo Voting Activity
+                        </h3>
+
+                    </div>
+
+                    <small>
+                        SAMPLE DATA
+                    </small>
+
+                </div>
+
+
+                <div class="chart">
+
+                    <div style="height:35%"
+                         class="chartBar">
+
+                        <div class="chartLabel">
+                            JAN
+                        </div>
+
+                    </div>
+
+
+                    <div style="height:50%"
+                         class="chartBar">
+
+                        <div class="chartLabel">
+                            FEB
+                        </div>
+
+                    </div>
+
+
+                    <div style="height:42%"
+                         class="chartBar">
+
+                        <div class="chartLabel">
+                            MAR
+                        </div>
+
+                    </div>
+
+
+                    <div style="height:68%"
+                         class="chartBar">
+
+                        <div class="chartLabel">
+                            APR
+                        </div>
+
+                    </div>
+
+
+                    <div style="height:57%"
+                         class="chartBar">
+
+                        <div class="chartLabel">
+                            MAY
+                        </div>
+
+                    </div>
+
+
+                    <div style="height:78%"
+                         class="chartBar">
+
+                        <div class="chartLabel">
+                            JUN
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- SERVICES -->
+
+        <section class="card"
+                 style="margin-top:18px;">
+
+
+            <div class="cardTitle">
+
+                <div>
+
+                    <small>
+                        QUICK ACCESS
+                    </small>
+
+                    <h3>
+                        Voter Services
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+            <div class="services">
+
+
+                <div class="service"
+                     onclick="openElectoralSearch()">
+
+                    <div class="serviceIcon">
+                        🔍
+                    </div>
+
+                    <strong>
+                        Electoral Roll
+                    </strong>
+
+                    <p>
+                        Search voter information
+                    </p>
+
+                </div>
+
+
+
+                <div class="service"
+                     onclick="openVoterServices()">
+
+                    <div class="serviceIcon">
+                        📋
+                    </div>
+
+                    <strong>
+                        Voter Services
+                    </strong>
+
+                    <p>
+                        Registration and services
+                    </p>
+
+                </div>
+
+
+
+                <div class="service"
+                     onclick="openECI()">
+
+                    <div class="serviceIcon">
+                        🏛️
+                    </div>
+
+                    <strong>
+                        Election Commission
+                    </strong>
+
+                    <p>
+                        Official election information
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- DEMO -->
+
+        <section class="demo">
+
+
+            <div>
+
+                <small>
+                    PROJECT DEMONSTRATION
+                </small>
+
+                <h2>
+                    Test the Voting System
+                </h2>
+
+                <p>
+                    Record a sample vote to demonstrate
+                    the JavaScript functionality.
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <button onclick="recordDemoVote()">
+
+                    + Record Demo Vote
+
+                </button>
+
+                <div id="demoMessage"></div>
+
+            </div>
+
+
+        </section>
+
+
+
+        <footer>
+
+            <span>
+                🗳️ Vote Validator © 2026
+            </span>
+
+            <span>
+                Educational Project • Sample Data Only
+            </span>
+
+        </footer>
+
+
+    </main>
+
+
+
+    <!-- JAVASCRIPT -->
+
+    <script>
+
+
+        /* GET VOTER DATA */
+
+        let voterName =
+            localStorage.getItem("voterName") || "Voter";
+
+        let voterAge =
+            localStorage.getItem("voterAge") || "-";
+
+        let voterPhone =
+            localStorage.getItem("voterPhone") || "-";
+
+
+        /* DISPLAY NAME */
+
+        document.getElementById("userName")
+            .textContent = voterName;
+
+
+        document.getElementById("profileName")
+            .textContent = voterName;
+
+
+        document.getElementById("displayAge")
+            .textContent =
+            voterAge + " years";
+
+
+        document.getElementById("displayPhone")
+            .textContent = voterPhone;
+
+
+        /* AVATAR */
+
+        let firstLetter =
+            voterName.charAt(0).toUpperCase();
+
+
+        document.getElementById("avatarLetter")
+            .textContent = firstLetter;
+
+
+        document.getElementById("profileLetter")
+            .textContent = firstLetter;
+
+
+
+        /* DEMO DATA */
+
+        let totalVoters = 1000;
+
+
+        let votesCast =
+            Number(
+                localStorage.getItem("demoVotes")
+            ) || 450;
+
+
+
+        /* UPDATE */
+
+        function updateDashboard() {
+
+            let remaining =
+                totalVoters - votesCast;
+
+
+            let turnout =
+                (votesCast / totalVoters) * 100;
+
+
+            document.getElementById(
+                "totalVoters"
+            ).textContent = totalVoters;
+
+
+            document.getElementById(
+                "votesCast"
+            ).textContent = votesCast;
+
+
+            document.getElementById(
+                "remaining"
+            ).textContent = remaining;
+
+
+            document.getElementById(
+                "turnout"
+            ).textContent =
+                turnout.toFixed(1) + "%";
+        }
+
+
+
+        /* DEMO VOTE */
+
+        function recordDemoVote() {
+
+            if (votesCast >= totalVoters) {
+
+                document.getElementById(
+                    "demoMessage"
+                ).textContent =
+                    "All demo votes have been recorded.";
+
+                return;
+            }
+
+
+            votesCast++;
+
+
+            localStorage.setItem(
+                "demoVotes",
+                votesCast
+            );
+
+
+            updateDashboard();
+
+
+            document.getElementById(
+                "demoMessage"
+            ).textContent =
+                "✓ Demo vote recorded successfully.";
+        }
+
+
+
+        /* LOGOUT */
+
+        function logout() {
+
+            window.location.href =
+                "index.html";
+        }
+
+
+
+        /* OFFICIAL SERVICES */
+
+        function openElectoralSearch() {
+
+            window.open(
+                "https://electoralsearch.eci.gov.in/",
+                "_blank"
+            );
+        }
+
+
+        function openVoterServices() {
+
+            window.open(
+                "https://voters.eci.gov.in/",
+                "_blank"
+            );
+        }
+
+
+        function openECI() {
+
+            window.open(
+                "https://www.eci.gov.in/",
+                "_blank"
+            );
+        }
+
+
+
+        /* START */
+
+        updateDashboard();
+
+    </script>
+
+
+</body>
+
+</html>
